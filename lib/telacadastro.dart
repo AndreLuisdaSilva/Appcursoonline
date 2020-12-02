@@ -2,12 +2,18 @@ import 'package:appsh/navigationlogin.dart';
 import 'package:appsh/telalogin.dart';
 import 'package:flutter/material.dart';
 import 'package:appsh/BLogin.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Telacadastro extends StatelessWidget {
+
+class Telacadastro extends StatefulWidget {
+  @override
+  _TelacadastroState createState() => _TelacadastroState();
+}
+
+class _TelacadastroState extends State<Telacadastro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold( body: Body()
-      
     );
   }
 }
@@ -17,15 +23,25 @@ class Telacadastro extends StatelessWidget {
 
 
 
-class Body extends StatelessWidget{
+class Body extends StatefulWidget{
  const Body({
     Key key,
- 
+    
   }) : super(key: key);
 
   @override
+  _BodyState createState() => _BodyState();
+}
 
-  Widget build(BuildContext context){
+class _BodyState extends State<Body> {
+  var txtEmail = TextEditingController();
+
+  var txtSenha = TextEditingController();
+
+  var db = FirebaseFirestore.instance;
+  @override
+
+  Widget build(BuildContext context){   
     Size size = MediaQuery.of(context).size;
     return Telacadastrob(
       varchild:SingleChildScrollView(
@@ -47,6 +63,7 @@ class Body extends StatelessWidget{
 
           Textlogin(
             varchild: TextField(
+              controller: txtEmail,
               decoration: InputDecoration(
                 icon: Icon(Icons.person, color: Colors.amber,
               ),
@@ -56,7 +73,8 @@ class Body extends StatelessWidget{
           ),
           Textlogin(
             varchild: TextField(
-              decoration: InputDecoration(
+              controller: txtSenha,
+              decoration: InputDecoration( labelText: "senha",
                 icon: Icon(Icons.vpn_key, color: Colors.orange,
                 ),
               ),
@@ -65,11 +83,19 @@ class Body extends StatelessWidget{
           Bt(
             text:"Cadastrar",
             color:Colors.amber,
-            press:() {Navigator.push(context, MaterialPageRoute(builder: (context){return Login();}
+            press:() async {
+                       db.collection("usuarios").add(
+                       {
+                        "email" : txtEmail.text,
+                        "senha" : txtSenha.text,
+                       }
+                      );
+              Navigator.push(context, MaterialPageRoute(builder: (context){return Login();}
             ),
             );
             },
           ),
+
 
            Container(
             margin: EdgeInsets.symmetric(vertical: 10),

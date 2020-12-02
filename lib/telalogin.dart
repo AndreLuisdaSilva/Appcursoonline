@@ -2,17 +2,30 @@ import 'package:appsh/telacadastro.dart';
 import 'package:appsh/telacursos.dart';
 import 'package:flutter/material.dart';
 import 'package:appsh/BLogin.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
-class Tela extends StatelessWidget {
-  const Tela({
+class Tela extends StatefulWidget {
+   
+   
+   const Tela({
     Key key,
  
   }) : super(key: key);
 
+  @override
+  _TelaState createState() => _TelaState();
+}
 
+class _TelaState extends State<Tela> {
+   var txemail = TextEditingController();
+
+  var txsenha = TextEditingController();
+
+  var db = FirebaseFirestore.instance;
 
   @override
+  
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Telaloginb
@@ -31,9 +44,11 @@ class Tela extends StatelessWidget {
           
           margin: EdgeInsets.symmetric(vertical: 10),
           ),
+          
 
           Textlogin(
             varchild:  TextField( 
+              controller: txemail,
               decoration: InputDecoration(
                 icon: Icon(
                   Icons.person, color: Colors.amber
@@ -44,6 +59,7 @@ class Tela extends StatelessWidget {
             ),
             Textlogin(
               varchild: TextField(
+                controller: txsenha,
                 obscureText: true,
                 decoration: InputDecoration(
                   icon: Icon(Icons.vpn_key,
@@ -55,9 +71,17 @@ class Tela extends StatelessWidget {
             Bt(
               text: "Logar",
               color: Colors.amber,
-              press: () {Navigator.push(context, MaterialPageRoute(builder: (context){return Telacrsos();}
+              press: () async {
+                QuerySnapshot usrs = await db.collection("usuarios").where('email', isEqualTo: txemail.text).where('senha', isEqualTo: txsenha.text).get();
+                if( usrs.docs.isNotEmpty){
+                Navigator.push(context, MaterialPageRoute(builder: (context){return Telacrsos();}
               ),
               );
+              }else{
+              final snackBar = SnackBar(content: Text('     usuario nao cadastrado'     ));
+               Scaffold.of(context).showSnackBar(snackBar);
+
+            }
               },
             ),
             Container(
